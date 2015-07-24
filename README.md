@@ -59,6 +59,9 @@ Configuring HyperExpress
 
 Maven resources:
 
+For HAL Support
+---------------
+
 Stable:
 
 ```xml
@@ -78,6 +81,30 @@ Development snapshot:
     <version>2.4-SNAPSHOT</version>
 </dependency>
 ```
+
+For Siren Support
+---------------
+
+Stable:
+
+```xml
+<dependency>
+    <groupId>com.strategicgains</groupId>
+    <artifactId>HyperExpress-Siren</artifactId>
+    <version>2.3</version>
+</dependency>
+```
+
+Development snapshot:
+
+```xml
+<dependency>
+    <groupId>com.strategicgains</groupId>
+    <artifactId>HyperExpress-Siren</artifactId>
+    <version>2.4-SNAPSHOT</version>
+</dependency>
+```
+
 Or you can download the jar file directly from http://search.maven.org/#search%7Cga%7C1%7Chyperexpress
 
 Note that if you want to use the SNAPSHOT version, the snapshot repository must be configured in your settings.xml file as follows:
