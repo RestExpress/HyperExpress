@@ -68,7 +68,7 @@ Stable:
 <dependency>
     <groupId>com.strategicgains</groupId>
     <artifactId>HyperExpress-HAL</artifactId>
-    <version>2.3</version>
+    <version>2.5</version>
 </dependency>
 ```
 
@@ -78,7 +78,7 @@ Development snapshot:
 <dependency>
     <groupId>com.strategicgains</groupId>
     <artifactId>HyperExpress-HAL</artifactId>
-    <version>2.4-SNAPSHOT</version>
+    <version>2.6-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -91,7 +91,7 @@ Stable:
 <dependency>
     <groupId>com.strategicgains</groupId>
     <artifactId>HyperExpress-Siren</artifactId>
-    <version>2.3</version>
+    <version>2.5</version>
 </dependency>
 ```
 
@@ -101,7 +101,7 @@ Development snapshot:
 <dependency>
     <groupId>com.strategicgains</groupId>
     <artifactId>HyperExpress-Siren</artifactId>
-    <version>2.4-SNAPSHOT</version>
+    <version>2.6-SNAPSHOT</version>
 </dependency>
 ```
 
