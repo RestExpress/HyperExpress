@@ -17,9 +17,14 @@ package com.strategicgains.hyperexpress.annotation;
 
 /**
  * @author toddf
- * @since Feb 5, 2015
+ * @since Aug 25, 2015
  */
-public interface TokenFormatter
+public class ToStringFormatter
+implements TokenFormatter
 {
-	public String format(Object field);
+	@Override
+	public String format(Object field)
+	{
+		return field.toString();
+	}
 }

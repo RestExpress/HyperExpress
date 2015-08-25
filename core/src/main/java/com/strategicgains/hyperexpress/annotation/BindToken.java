@@ -32,11 +32,11 @@ public @interface BindToken
 	/**
 	 * The name of the token in the URL
 	 */
-	String token();
+	String value();
 
 	/**
 	 * The {@link TokenFormatter} to use when converting this property to a string.
 	 * Otherwise, toString() will be used.
 	 */
-	Class<? extends TokenFormatter<?>> formatter = null;
+	Class<? extends TokenFormatter> formatter() default ToStringFormatter.class;
 }
