@@ -14,6 +14,13 @@ import org.junit.Test;
 public class StringsTest
 {
 	@Test
+	public void shouldJoin()
+	{
+		String[] array = {"one", "two", "three"};
+		assertEquals("one,two,three", Strings.join(",", array));
+	}
+
+	@Test
 	public void shouldPluralize()
 	{
 		assertEquals("keys", Strings.pluralize("key"));

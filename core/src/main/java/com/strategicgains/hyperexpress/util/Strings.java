@@ -84,4 +84,27 @@ public class Strings
 	{
 		// Prevents instantiation.
 	}
+
+
+	public static String join(String delimiter, String[] array)
+	{
+		StringBuilder sb = new StringBuilder();
+		boolean isFirst = true;
+
+		for (String string : array)
+		{
+			if (isFirst)
+			{
+				isFirst = false;
+			}
+			else
+			{
+				sb.append(delimiter);
+			}
+
+			sb.append(string);
+		}
+
+		return sb.toString();
+	}
 }

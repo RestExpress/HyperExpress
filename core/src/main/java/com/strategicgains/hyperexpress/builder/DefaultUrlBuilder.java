@@ -299,7 +299,7 @@ implements UrlBuilder
 		if (tokenResolver != null)
 		{
 			String[] resolved = tokenResolver.resolveMulti(query);
-			String all = String.join(queryDelimiter(true), resolved);
+			String all = Strings.join(queryDelimiter(true), resolved);
 			return (Strings.hasToken(all) ? null : all);
 		}
 
