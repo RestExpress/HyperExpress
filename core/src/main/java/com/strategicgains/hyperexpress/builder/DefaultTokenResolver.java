@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.strategicgains.hyperexpress.annotation.AnnotationTokenBinder;
+import com.strategicgains.hyperexpress.annotation.BindToken;
 import com.strategicgains.hyperexpress.util.MapStringFormat;
 import com.strategicgains.hyperexpress.util.Strings;
 
@@ -47,6 +49,37 @@ implements TokenResolver
 	private Map<String, String> values = new HashMap<String, String>();
 	private Map<String, Set<String>> multiValues = new HashMap<String, Set<String>>();
 	private List<TokenBinder<?>> binders = new ArrayList<TokenBinder<?>>();
+	private boolean bindAnnotations = false;
+
+	/**
+	 * Maintains historical behavior that does not bind via Annotations.
+	 * Same as DefaultTokenResolver(false).
+	 */
+	public DefaultTokenResolver()
+	{
+		this(false);
+	}
+
+	/**
+	 * When bindAnnotations is true, inserts a TokenBinder that will bind an object's properties
+	 * to tokens via the {@link BindToken} annotation.
+	 * 
+	 * @param bindAnnotations
+	 */
+	public DefaultTokenResolver(boolean bindAnnotations)
+	{
+		super();
+		this.bindAnnotations = bindAnnotations;
+		initialize();
+	}
+
+	private void initialize()
+	{
+		if (bindAnnotations)
+		{
+			binder(AnnotationTokenBinder.instance());
+		}
+	}
 
 	/**
 	 * Bind a token to a value. During resolve(), any token names matching
@@ -168,11 +201,14 @@ implements TokenResolver
 	}
 
 	/**
-	 * Removes all token binder callbacks from this TokenResolver.
+	 * Removes all user set token binder callbacks from this TokenResolver.
+	 * If the internal setting 'bindAnnotations' is true, the annotation
+	 * token binder is not removed.
 	 */
 	public void clearBinders()
 	{
 		binders.clear();
+		initialize();
 	}
 
 	/**
@@ -183,7 +219,7 @@ implements TokenResolver
 	public void reset()
 	{
 		clear();
-		binders.clear();
+		clearBinders();
 	}
 
 	/**
@@ -325,19 +361,12 @@ implements TokenResolver
 	{
 		StringBuilder s = new StringBuilder();
 	    s.append("{");
-		boolean isFirst = true;
+		s.append("bindAnnotations=");
+		s.append(bindAnnotations);
 
 		for (Entry<String, String> entry : values.entrySet())
 		{
-			if (!isFirst)
-			{
-				s.append(", ");
-			}
-			else
-			{
-				isFirst = false;
-			}
-
+			s.append(", ");
 			s.append(entry.getKey());
 			s.append("=");
 			s.append(entry.getValue());

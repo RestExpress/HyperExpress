@@ -6,6 +6,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 
+import com.strategicgains.hyperexpress.annotation.BindToken;
+
 public class DefaultTokenResolverTest
 {
 	private static final String[] URLS = {
@@ -14,7 +16,7 @@ public class DefaultTokenResolverTest
 		"{f}"
 	};
 
-	private TokenResolver resolver = new DefaultTokenResolver()
+	private TokenResolver resolver = new DefaultTokenResolver(true)
 		.bind("a", "a")
 		.bind("b", "b")
 		.bind("c", "c")
@@ -62,6 +64,19 @@ public class DefaultTokenResolverTest
 		verifyUrls(urls, "/a/a/b/b", "/c/c/d/d/e/13", "{f}");
 	}
 
+	@Test
+	public void shouldBindViaAnnotations()
+	{
+		String urlPattern = "/{annotated}/{formatted}/{nullable}";
+		Resolvable r = new Resolvable();
+		assertEquals("/0/0.00/{nullable}", resolver.resolve(urlPattern, r));
+
+		r.anInt = 22;
+		r.aDouble = 33.1234567;
+		r.nullable = 1;
+		assertEquals("/22/33.12/1", resolver.resolve(urlPattern, r));
+	}
+
 	private void verifyUrls(Collection<String> actual, String... expected)
     {
 		assertEquals(expected.length, actual.size());
@@ -76,5 +91,14 @@ public class DefaultTokenResolverTest
 	private class Resolvable
 	{
 		public int e;
+
+		@BindToken("annotated")
+		public int anInt;
+
+		@BindToken(value = "formatted", formatter = DoubleFormatter.class)
+		public double aDouble;
+
+		@BindToken("nullable")
+		public Integer nullable;
 	}
 }
