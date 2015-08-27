@@ -26,12 +26,12 @@ import com.strategicgains.hyperexpress.exception.ResourceException;
 
 /**
  * Binds tokens from a POJO for those fields annotated with {@link BindToken}.
- * The singleton INSTANCE value may be used to optimize the usage of TokenFormatter
+ * The singleton instance() method may be used to optimize the usage of TokenFormatter
  * instances, since they get cached after usage.
  * 
  * Usage can be as simple as adding the singleton instance to a {@link TokenResolver}
  * TokenResolver tr = new TokenResolver();
- * tr.binder(AnnotationTokenBinder.INSTANCE);
+ * tr.binder(AnnotationTokenBinder.intstance());
  * tr.resolve(pattern, object);
  * 
  * @author toddf
@@ -43,7 +43,7 @@ implements TokenBinder<Object>
 	/**
 	 * A general usage Singleton instance of this class.
 	 */
-	public static final AnnotationTokenBinder INSTANCE = new AnnotationTokenBinder();
+	private static final AnnotationTokenBinder INSTANCE = new AnnotationTokenBinder();
 
 	/**
 	 * Each {@link BindToken} annotation has a TokenFormatter declared (which is defaulted to
@@ -51,6 +51,17 @@ implements TokenBinder<Object>
 	 * here to speed up usage for any other annotations using the same formatter.
 	 */
 	private Map<Class<?>, TokenFormatter> formatters = new ConcurrentHashMap<>();
+
+	/**
+	 * Acquire the Singleton instance of the AnnotationTokenBinder. This may be used to optimize
+	 * the usage of TokenFormatter instances, since they get cached after usage.
+	 * 
+	 * @return
+	 */
+	public static AnnotationTokenBinder instance()
+	{
+		return INSTANCE;
+	}
 
 	/**
 	 * Bind fields annotated with {@link BindToken} into the given TokenResolver.
