@@ -251,9 +251,16 @@ Once we have the static relationships defined, it's time to map domain propertie
 Resolving URL Tokens
 --------------------
 
-There are two ways to resolve data properties in a model to template URL tokens. The first
-is simply using HyperExpress.bind(String token, String value), which simply maps URL
-to the given value.
+There are three ways to resolve data properties in a model to template URL tokens. The first, as of
+HyperExpress 2.6, is simply to annotate the domain model or POJO using the **BindToken** annotation.
+
+**@BindToken("tokenName")** for each of the properties in the POJO that maps to the URL tokens. This will call toString() on the field when populating the URL token. If
+that doesn't work, then use the second form as follows:
+
+**@BindToken(value="tokenName", formatter=MyTokenFormatter.class)** where MyTokenFormatter is a class you create, implementing TokenFormatter, that has a single method
+with the signature 'String format(Object o)'. This enables formatting the property into whatever string format is needed.
+
+The second method to bind tokens is using HyperExpress.bind(String token, String value), which simply maps a URL token to the given value.
 
 **HyperExpress.bind(String, String)** - Bind a URL token to a string value. During resource creation, any URL tokens matching the given token string are replace with the provided value. The TokenResolver bindings are specific to the current thread.
 
@@ -266,7 +273,7 @@ HyperExpress.bind("blogId", "1234")
 	.bind("commentId", "90123");
 ```
 
-The second method is to use a TokenBinder that is effectively a callback and works well for collection resources, where each
+The third method is to use a TokenBinder that is effectively a callback and works well for collection resources, where each
 item in the collection might have links also.
 
 **HyperExpress.tokenBinder(TokenBinder)** - Uses the TokenBinder as a callback during HyperExpress.createCollectionResource(), binding each object in a collection to the links for that instance.
