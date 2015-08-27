@@ -16,8 +16,8 @@
 package com.strategicgains.hyperexpress.annotation;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.strategicgains.hyperexpress.builder.TokenBinder;
 import com.strategicgains.hyperexpress.builder.TokenResolver;
@@ -25,18 +25,40 @@ import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.exception.ResourceException;
 
 /**
+ * Binds tokens from a POJO for those fields annotated with {@link BindToken}.
+ * The singleton INSTANCE value may be used to optimize the usage of TokenFormatter
+ * instances, since they get cached after usage.
+ * 
+ * Usage can be as simple as adding the singleton instance to a {@link TokenResolver}
+ * TokenResolver tr = new TokenResolver();
+ * tr.binder(AnnotationTokenBinder.INSTANCE);
+ * tr.resolve(pattern, object);
+ * 
  * @author toddf
  * @since Aug 25, 2015
  */
 public class AnnotationTokenBinder
 implements TokenBinder<Object>
 {
-	private Map<Class<?>, TokenFormatter> formatters = new HashMap<>();
+	/**
+	 * A general usage Singleton instance of this class.
+	 */
+	public static final AnnotationTokenBinder INSTANCE = new AnnotationTokenBinder();
 
+	/**
+	 * Each {@link BindToken} annotation has a TokenFormatter declared (which is defaulted to
+	 * {@link ToStringFormatter}. Once newInstance() is called on a formatter, it is cached
+	 * here to speed up usage for any other annotations using the same formatter.
+	 */
+	private Map<Class<?>, TokenFormatter> formatters = new ConcurrentHashMap<>();
+
+	/**
+	 * Bind fields annotated with {@link BindToken} into the given TokenResolver.
+	 */
 	@Override
 	public void bind(Object object, TokenResolver resolver)
 	{
-		copyProperties0(object.getClass(), object, resolver);
+		bindProperties(object.getClass(), object, resolver);
 	}
 
 	/**
@@ -47,7 +69,7 @@ implements TokenBinder<Object>
 	 * @param from the instance of Object being bound.
 	 * @param to the destination TokenResolver instance.
 	 */
-	private void copyProperties0(Class<?> type, Object from, TokenResolver resolver)
+	private void bindProperties(Class<?> type, Object from, TokenResolver resolver)
 	{
 		if (type == null) return;
 		if (Resource.class.isAssignableFrom(type))
@@ -70,7 +92,7 @@ implements TokenBinder<Object>
 					
 					if (value != null)
 					{
-						bindAnnotation(annotation, value, resolver);
+						bindAnnotatedProperty(annotation, value, resolver);
 					}
 				}
 			}
@@ -80,10 +102,10 @@ implements TokenBinder<Object>
 			throw new ResourceException(e);
 		}
 
-		copyProperties0(type.getSuperclass(), from, resolver);
+		bindProperties(type.getSuperclass(), from, resolver);
 	}
 
-	private void bindAnnotation(BindToken annotation, Object field, TokenResolver resolver)
+	private void bindAnnotatedProperty(BindToken annotation, Object field, TokenResolver resolver)
 	throws InstantiationException, IllegalAccessException
 	{
 		Class<? extends TokenFormatter> formatterClass = annotation.formatter();
