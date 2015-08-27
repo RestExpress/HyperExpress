@@ -45,6 +45,6 @@ implements BuilderFactory
 	@Override
     public TokenResolver newTokenResolver()
     {
-	    return new DefaultTokenResolver();
+	    return new DefaultTokenResolver(true);
     }
 }
