@@ -25,6 +25,28 @@ import com.strategicgains.hyperexpress.BuilderFactory;
 public class DefaultBuilderFactory
 implements BuilderFactory
 {
+	private boolean useAnnotationsResolver;
+
+	/**
+	 * Creates a new DefaultBuilderFactory. Same as DefaultBuilderFactory(true).
+	 */
+	public DefaultBuilderFactory()
+	{
+		this(true);
+	}
+
+	/**
+	 * When useAnnotationsResolver is set to true, the newTokenResolver() method will create
+	 * a token resolver that will also bind via the {@link BindToken} annotations in the POJO model.
+	 * 
+	 * @param useAnnotationsResolver
+	 */
+	public DefaultBuilderFactory(boolean useAnnotationsResolver)
+	{
+		super();
+		this.useAnnotationsResolver = useAnnotationsResolver;
+	}
+
 	@Override
 	public ConditionalLinkBuilder newLinkBuilder()
 	{
@@ -45,6 +67,6 @@ implements BuilderFactory
 	@Override
     public TokenResolver newTokenResolver()
     {
-	    return new DefaultTokenResolver(true);
+	    return new DefaultTokenResolver(useAnnotationsResolver);
     }
 }
