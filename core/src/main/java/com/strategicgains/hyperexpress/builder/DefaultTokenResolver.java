@@ -33,10 +33,13 @@ import com.strategicgains.hyperexpress.util.MapStringFormat;
 import com.strategicgains.hyperexpress.util.Strings;
 
 /**
- * TokenResolver is a utility class that replaces tokens (e.g. '{tokenName}')
+ * DefaultTokenResolver is a utility class that replaces tokens (e.g. '{tokenName}')
  * in strings with values. It allows the addition of TokenBinder instances,
  * which are simply callbacks that can extract token values from Object
  * instances before replacing tokens in a string.
+ * 
+ * This class is not thread safe as object values are bound into it before
+ * resolving tokens in URL(s).
  * 
  * @author toddf
  * @since Apr 28, 2014
