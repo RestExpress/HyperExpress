@@ -23,11 +23,12 @@ import com.strategicgains.hyperexpress.builder.TokenBinder;
 import com.strategicgains.hyperexpress.builder.TokenResolver;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.exception.ResourceException;
+import com.strategicgains.hyperexpress.util.Objects;
 
 /**
- * Binds tokens from a POJO for those fields annotated with {@link BindToken}.
- * The singleton instance() method may be used to optimize the usage of TokenFormatter
- * instances, since they get cached after usage.
+ * Binds tokens from a POJO annotated with {@link TokenBindings} and for those fields
+ * annotated with {@link BindToken}. The singleton instance() method may be used to
+ * optimize the usage of TokenFormatter instances, since they get cached after usage.
  * 
  * Usage can be as simple as adding the singleton instance to a {@link TokenResolver}
  * TokenResolver tr = new TokenResolver();
@@ -88,6 +89,7 @@ implements TokenBinder<Object>
 			return;
 		}
 
+		performClassBindings(from, resolver);
 		Field[] fields = type.getDeclaredFields();
 
 		try
@@ -100,6 +102,11 @@ implements TokenBinder<Object>
 				{
 					f.setAccessible(true);
 					Object value = f.get(from);
+
+					if (hasPropertyPath(annotation))
+					{
+						value = Objects.property(annotation.field(), value);
+					}
 					
 					if (value != null)
 					{
@@ -108,7 +115,7 @@ implements TokenBinder<Object>
 				}
 			}
 		}
-		catch (IllegalAccessException | InstantiationException e)
+		catch (IllegalAccessException | InstantiationException | NoSuchFieldException | IllegalArgumentException e)
 		{
 			throw new ResourceException(e);
 		}
@@ -116,11 +123,44 @@ implements TokenBinder<Object>
 		bindProperties(type.getSuperclass(), from, resolver);
 	}
 
+	private void performClassBindings(Object from, TokenResolver resolver)
+	{
+		if (from == null) return;
+
+		TokenBindings bindings = from.getClass().getAnnotation(TokenBindings.class);
+		
+		if (bindings == null) return;
+
+		for (BindToken binding : bindings.value())
+		{
+			if (hasPropertyPath(binding))
+			{
+				try
+				{
+					Object value = Objects.property(binding.field(), from);
+					bindAnnotatedProperty(binding, value, resolver);
+				}
+				catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InstantiationException e)
+				{
+					throw new ResourceException(e);
+				}
+			}
+			else
+			{
+				throw new ResourceException("Class-level BindToken annotations require 'field' path.");				
+			}
+		}
+	}
+
+	private boolean hasPropertyPath(BindToken annotation)
+	{
+		return !"".equals(annotation.field());
+	}
+
 	private void bindAnnotatedProperty(BindToken annotation, Object field, TokenResolver resolver)
 	throws InstantiationException, IllegalAccessException
 	{
 		Class<? extends TokenFormatter> formatterClass = annotation.formatter();
-
 		TokenFormatter formatter = formatters.get(formatterClass);
 
 		if (formatter == null)

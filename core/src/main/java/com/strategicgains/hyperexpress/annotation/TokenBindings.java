@@ -15,33 +15,21 @@
 */
 package com.strategicgains.hyperexpress.annotation;
 
-import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
+ * Define URL token bindings on the class for those properties that cannot be annotated directly.
+ * 
  * @author toddf
- * @since Feb 5, 2015
+ * @since Oct 1, 2015
  */
 @Retention(RUNTIME)
-@Target(FIELD)
-public @interface BindToken
+@Target(TYPE)
+public @interface TokenBindings
 {
-	/**
-	 * The name of the token in the URL
-	 */
-	String value();
-
-	/**
-	 * The dot-separated path to the field in the annotated object.
-	 */
-	String field() default "";
-
-	/**
-	 * The {@link TokenFormatter} to use when converting this property to a string.
-	 * Otherwise, toString() will be used.
-	 */
-	Class<? extends TokenFormatter> formatter() default ToStringFormatter.class;
+	BindToken[] value();
 }
