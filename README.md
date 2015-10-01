@@ -251,14 +251,87 @@ Once we have the static relationships defined, it's time to map domain propertie
 Resolving URL Tokens
 --------------------
 
-There are three ways to resolve data properties in a model to template URL tokens. The first, as of
-HyperExpress 2.6, is simply to annotate the domain model or POJO using the **BindToken** annotation.
+There are several ways to resolve data properties in a model to template URL tokens:
+
+* annotations
+* explicit token binding
+* TokenBinder implementation
+
+Annotations
+===========
+
+HyperExpress 2.6+ has the ability to simply annotate the domain model or POJO. By using the annotations on the
+object model no additional bindings are necessary. HyperExpress.createResource() and .createCollectionResource()
+will navigate the domain object and bind and format relevant values to the URL patterns in the static relationships.
+
+This can clean up your web controller logic considerably. But clutters your domain model with URL token binding
+functionality which, arguably, is not a domain model concern.
+
+The **BindToken** annotation can be used directly on fields to bind them to URL tokens. If the field is an
+object with a property within it that must be bound, use the optional 'field' setting on the annotation to
+specify a dot-separated path to the property being bound.
+
+When properties must be bound from a superclass that you don't have control of, the class-level annotation **TokenBindings**
+can be used to set **BindToken** options at the class level, using the 'field' setting to use a dot-separated path to the
+property being bound.
 
 **@BindToken("tokenName")** for each of the properties in the POJO that maps to the URL tokens. This will call toString() on the field when populating the URL token. If
 that doesn't work, then use the second form as follows:
 
-**@BindToken(value="tokenName", formatter=MyTokenFormatter.class)** where MyTokenFormatter is a class you create, implementing TokenFormatter, that has a single method
+**@BindToken(value="tokenName", formatter=MyTokenFormatter.class)** where MyTokenFormatter is a class you create, implementing the TokenFormatter interface, that has a single method
 with the signature 'String format(Object o)'. This enables formatting the property into whatever string format is needed.
+
+Here is an example from one of the unit tests that illustrates the annotations usage:
+
+```java
+@TokenBindings({
+	@BindToken(value = "dId", field = "d.id")
+	// more @BindToken() annotations could go here (after a comma)
+})
+private class Annotated
+{
+	@BindToken("string")
+	private String string = "a string";
+
+	@BindToken("UUID")
+	private UUID uuid = UUID.fromString("6777a80b-88f1-4e66-88d6-c88ffc164050");
+
+	@BindToken("intValue")
+	private int primitiveInt = 42;
+
+	// Don't bind this.
+	@SuppressWarnings("unused")
+	private int notBound = 43;
+
+	@BindToken(value = "bValue", field = "c.value")
+	private B b = new B();
+
+	// Bind this via a class-level annotation.
+	@SuppressWarnings("unused")
+	private D d = new D();
+}
+
+private class B
+{
+	@SuppressWarnings("unused")
+	private C c = new C();
+}
+
+private class C
+{
+	@SuppressWarnings("unused")
+	private String value = "got_it";
+}
+
+private class D
+{
+	@SuppressWarnings("unused")
+	UUID id = UUID.fromString("7630d885-0af8-428b-bfea-91a95d597932");
+}
+```
+
+Explicit Token Binding
+======================
 
 The second method to bind tokens is using HyperExpress.bind(String token, String value), which simply maps a URL token to the given value.
 
@@ -272,6 +345,9 @@ HyperExpress.bind("blogId", "1234")
 	.bind("entryId", "5678")
 	.bind("commentId", "90123");
 ```
+
+TokenBinder Implementation
+==========================
 
 The third method is to use a TokenBinder that is effectively a callback and works well for collection resources, where each
 item in the collection might have links also.
