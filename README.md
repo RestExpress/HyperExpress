@@ -155,7 +155,7 @@ module.addSerializer(HalResource.class, new HalResourceSerializer());
 Now you're ready to generate Resource representations.
 
 Defining Static Relationships
------------------------------
+=============================
 
 HyperExpress has a RelationshipDefinition class, accessed via the HyperExpress.relationships()
 method, although it can be created outside the HyperExpress singleton class also.
@@ -249,7 +249,7 @@ Note that the namespaces apply to all resources and are oriented toward CURIE fo
 Once we have the static relationships defined, it's time to map domain properties to those template URL tokens.
 
 Resolving URL Tokens
---------------------
+====================
 
 There are several ways to resolve data properties in a model to template URL tokens:
 
@@ -258,7 +258,7 @@ There are several ways to resolve data properties in a model to template URL tok
 * TokenBinder implementation
 
 Annotations
-===========
+-----------
 
 HyperExpress 2.6+ has the ability to simply annotate the domain model or POJO. By using the annotations on the
 object model no additional bindings are necessary. HyperExpress.createResource() and .createCollectionResource()
@@ -331,7 +331,7 @@ private class D
 ```
 
 Explicit Token Binding
-======================
+----------------------
 
 The second method to bind tokens is using HyperExpress.bind(String token, String value), which simply maps a URL token to the given value.
 
@@ -347,7 +347,7 @@ HyperExpress.bind("blogId", "1234")
 ```
 
 TokenBinder Implementation
-==========================
+--------------------------
 
 The third method is to use a TokenBinder that is effectively a callback and works well for collection resources, where each
 item in the collection might have links also.
@@ -376,7 +376,7 @@ HyperExpress.tokenBinder(new TokenBinder<Comment>()
 ```
 
 Creating Resources
-------------------
+==================
 
 HyperExpress distinguishes between single resources and collection resources at creation time.
 This allows you to create a Resource from a collection of domain instances, or from a single domain object.
@@ -411,7 +411,7 @@ resource has at least a "self" link, and possibly "next" and "previous" links. A
 is embedded in the root resource, with each of those embedded resources having their own links, "blog:author", "blog:entries", "self", "up".
 
 Cleaning Up
------------
+===========
 
 HyperExpress maintains a ThreadLocal for all of the token bindings.  This means HyperExpress bindings are thread safe.
 However, it also means that HyperExpresss is holding references to all those bindings, which will cause
