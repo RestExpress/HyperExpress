@@ -288,7 +288,7 @@ Here is an example from one of the unit tests that illustrates the annotations u
 	@BindToken(value = "dId", field = "d.id")
 	// more @BindToken() annotations could go here (after a comma)
 })
-private class Annotated
+public class Annotated
 {
 	@BindToken("string")
 	private String string = "a string";
@@ -303,6 +303,7 @@ private class Annotated
 	@SuppressWarnings("unused")
 	private int notBound = 43;
 
+	// Binds 'b.c.value' to the token, 'bValue'
 	@BindToken(value = "bValue", field = "c.value")
 	private B b = new B();
 
