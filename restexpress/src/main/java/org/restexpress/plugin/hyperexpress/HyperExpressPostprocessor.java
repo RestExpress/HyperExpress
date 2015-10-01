@@ -27,7 +27,6 @@ import org.restexpress.plugin.hyperexpress.expand.ExpansionParser;
 
 import com.strategicgains.hyperexpress.HyperExpress;
 import com.strategicgains.hyperexpress.domain.Resource;
-import com.strategicgains.hyperexpress.exception.ResourceException;
 import com.strategicgains.hyperexpress.expand.Expander;
 import com.strategicgains.hyperexpress.expand.Expansion;
 
@@ -66,43 +65,36 @@ implements Postprocessor
 		Class<?> bodyClass = body.getClass();
 		Expansion expansion = ExpansionParser.parseFrom(request, response);
 
-		try
+		if (isMarkerClass(bodyClass))
 		{
-			if (isMarkerClass(bodyClass))
+			resource = HyperExpress.createResource(body, expansion.getMediaType());
+			Expander.expand(expansion, bodyClass, resource);
+		}
+		else if (isCollection(bodyClass))
+		{
+			Type type = request.getResolvedRoute().getAction().getGenericReturnType();
+
+			if (type instanceof ParameterizedType)
 			{
-				resource = HyperExpress.createResource(body, expansion.getMediaType());
-				Expander.expand(expansion, bodyClass, resource);
-			}
-			else if (isCollection(bodyClass))
-			{
-				Type type = request.getResolvedRoute().getAction().getGenericReturnType();
-	
-				if (type instanceof ParameterizedType)
+				Type t = (((ParameterizedType) type).getActualTypeArguments())[0];
+
+				if (resourceMarker.isAssignableFrom((Class<?>) t))
 				{
-					Type t = (((ParameterizedType) type).getActualTypeArguments())[0];
-	
-					if (resourceMarker.isAssignableFrom((Class<?>) t))
-					{
-						String componentRel = HyperExpress.relationships().getCollectionRelFor((Class<?>) t);
-						resource = HyperExpress.createCollectionResource((Collection<?>) body, (Class<?>) t, componentRel, expansion.getMediaType());
-				    	Expander.expand(expansion, (Class<?>) t, resource.getResources(componentRel));
-					}
-				}
-			}
-			else if (bodyClass.isArray())
-			{
-				if (isMarkerClass(bodyClass.getComponentType()))
-				{
-					String componentRel = HyperExpress.relationships().getCollectionRelFor(bodyClass.getComponentType());
-					resource = HyperExpress.createCollectionResource(Arrays.asList((Object[]) body),
-						bodyClass.getComponentType(), componentRel, expansion.getMediaType());
-			    	Expander.expand(expansion, bodyClass.getComponentType(), resource.getResources(componentRel));
+					String componentRel = HyperExpress.relationships().getCollectionRelFor((Class<?>) t);
+					resource = HyperExpress.createCollectionResource((Collection<?>) body, (Class<?>) t, componentRel, expansion.getMediaType());
+			    	Expander.expand(expansion, (Class<?>) t, resource.getResources(componentRel));
 				}
 			}
 		}
-		catch (ResourceException e)
+		else if (bodyClass.isArray())
 		{
-			// log the exception and move on...
+			if (isMarkerClass(bodyClass.getComponentType()))
+			{
+				String componentRel = HyperExpress.relationships().getCollectionRelFor(bodyClass.getComponentType());
+				resource = HyperExpress.createCollectionResource(Arrays.asList((Object[]) body),
+					bodyClass.getComponentType(), componentRel, expansion.getMediaType());
+		    	Expander.expand(expansion, bodyClass.getComponentType(), resource.getResources(componentRel));
+			}
 		}
 
 		if (resource != null)
