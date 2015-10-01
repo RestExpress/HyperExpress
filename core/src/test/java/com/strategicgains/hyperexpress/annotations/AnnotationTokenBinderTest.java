@@ -21,8 +21,8 @@ public class AnnotationTokenBinderTest
 		AnnotationTokenBinder atb = new AnnotationTokenBinder();
 		TokenResolver tr = new DefaultTokenResolver();
 		tr.binder(atb);
-		String result = tr.resolve("{string},{UUID},{intValue},{notBound},{bValue},{dId}", a);
-		assertEquals("a string,6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},got_it,7630d885-0af8-428b-bfea-91a95d597932", result);
+		String result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}", a);
+		assertEquals("bc697197-d5af-4c40-8c9f-5f1f4045cf19,a string,6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},got_it,7630d885-0af8-428b-bfea-91a95d597932", result);
 	}
 
 	@Test
@@ -31,8 +31,8 @@ public class AnnotationTokenBinderTest
 		AnnotationTokenBinder atb = new AnnotationTokenBinder();
 		TokenResolver tr = new DefaultTokenResolver();
 		tr.binder(atb);
-		String result = tr.resolve("{string},{UUID},{intValue},{notBound},{bValue},{dId}");
-		assertEquals("{string},{UUID},{intValue},{notBound},{bValue},{dId}", result);
+		String result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}");
+		assertEquals("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}", result);
 	}
 
 	@Test
@@ -42,14 +42,16 @@ public class AnnotationTokenBinderTest
 		AnnotationTokenBinder atb = new AnnotationTokenBinder();
 		TokenResolver tr = new DefaultTokenResolver();
 		atb.bind(a, tr);
-		String result = tr.resolve("{string},{UUID},{intValue},{notBound},{bValue},{dId}");
-		assertEquals("a string,6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},got_it,7630d885-0af8-428b-bfea-91a95d597932", result);
+		String result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}");
+		assertEquals("bc697197-d5af-4c40-8c9f-5f1f4045cf19,a string,6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},got_it,7630d885-0af8-428b-bfea-91a95d597932", result);
 	}
 
 	@TokenBindings({
+		@BindToken(value = "id", field="_id"),
 		@BindToken(value = "dId", field = "d.id")
 	})
 	private class Annotated
+	extends Super
 	{
 		@BindToken("string")
 		private String string = "a string";
@@ -88,5 +90,11 @@ public class AnnotationTokenBinderTest
 	{
 		@SuppressWarnings("unused")
 		UUID id = UUID.fromString("7630d885-0af8-428b-bfea-91a95d597932");
+	}
+
+	private abstract class Super
+	{
+		@SuppressWarnings("unused")
+		private UUID _id = UUID.fromString("bc697197-d5af-4c40-8c9f-5f1f4045cf19");
 	}
 }

@@ -25,7 +25,7 @@ import java.lang.reflect.Field;
 public class Objects
 {
 	/**
-	 * Find a field in a class. Utilizes a dot-separated path to find a property (field) in the object inheritence hierarchy.
+	 * Find a field in a class. Utilizes a dot-separated path to find a property (field) in the object inheritance hierarchy.
 	 * 
 	 * @param propertyPath a dot-separated path to the desired property.
 	 * @param object the object from which to extract the field value.
@@ -43,12 +43,27 @@ public class Objects
 
 		for (String property : properties)
 		{
-			Field field = objectClass.getDeclaredField(property);
+			Field field = getDeclaredField(property, objectClass);
 			field.setAccessible(true);
 			objectClass = field.getType();
 			current = field.get(current);
 		}
 
 		return current;
+	}
+
+	private static Field getDeclaredField(String property, Class<?> objectClass)
+	throws NoSuchFieldException
+	{
+		if (objectClass == null) throw new NoSuchFieldException(property);
+
+		try
+		{
+			return objectClass.getDeclaredField(property);
+		}
+		catch(NoSuchFieldException e)
+		{
+			return getDeclaredField(property, objectClass.getSuperclass());
+		}
 	}
 }
