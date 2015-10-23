@@ -37,6 +37,8 @@ public class Objects
 	public static Object property(String propertyPath, Object object)
 	throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException
 	{
+		if (object == null) return null;
+
 		String[] properties = propertyPath.split("\\.");
 		Class<?> objectClass = object.getClass();
 		Object current = object;
@@ -47,6 +49,8 @@ public class Objects
 			field.setAccessible(true);
 			objectClass = field.getType();
 			current = field.get(current);
+
+			if (current == null) return null;
 		}
 
 		return current;
