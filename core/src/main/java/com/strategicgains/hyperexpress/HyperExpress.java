@@ -134,6 +134,22 @@ public class HyperExpress
 	}
 
 	/**
+	 * Create a collection of resource instances from a collection of objects for the given content type.
+	 * A new resource is created for each component in the collection unless the component is already
+	 * a resource. In this case, links are applied and the resource is added directly to the resuling
+	 * collection.
+	 * 
+	 * @param components
+	 * @param componentType the Class (type) of each component in the collection.
+	 * @param contentType
+	 * @return
+	 */
+	public static Collection<Resource> createResources(Collection<?> components, Class<?> componentType, String contentType)
+	{
+		return INSTANCE._createResources(components, componentType, contentType);
+	}
+
+	/**
 	 * Return the type of the concrete Resource implementation that is created for the
 	 * given contentType.
 	 * 
@@ -262,6 +278,29 @@ public class HyperExpress
 		Resource r = resourceFactory.createResource(object, contentType);
 		_assignResourceLinks(r, object, (object == null ? null : object.getClass()));
 		return r;
+	}
+
+	private Collection<Resource> _createResources(Collection<?> components, Class<?> componentType, String contentType)
+	{
+		if (components == null || components.isEmpty()) return Collections.emptyList();
+
+		List<Resource> resources = new ArrayList<Resource>(components.size());
+		Resource childResource = null;
+
+		for (Object component : components)
+		{
+			if (Resource.class.isAssignableFrom(component.getClass()))
+			{
+				childResource = (Resource) component;
+				_assignResourceLinks(childResource, component, componentType);
+			}
+			else
+			{
+				childResource = _createResource(component, contentType);
+			}
+		}
+
+		return resources;
 	}
 
 	private Class<? extends Resource> _getResourceType(String contentType)
