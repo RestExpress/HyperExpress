@@ -69,14 +69,20 @@ public class HyperExpress
 	 */
 	private HyperExpress()
 	{
+		_initialize();
+	}
+
+
+	// SECTION: STATIC - PUBLIC METHODS
+
+	private void _initialize()
+	{
 		resourceFactory = new DefaultResourceFactory();
 		relationshipDefinition = new RelationshipDefinition();
 		tokenResolver = new ThreadLocal<TokenResolver>();
 		builderFactory = new DefaultBuilderFactory();
 	}
 
-
-	// SECTION: STATIC - PUBLIC METHODS
 
 	/**
 	 * Globally set the BuilderFactory to use when creating internal LinkBuilder, TokenResolver, and
@@ -254,6 +260,16 @@ public class HyperExpress
 	public static void clearTokenBindings()
 	{
 		INSTANCE._clearTokenBindings();
+	}
+
+	/**
+	 * Reinitializes all the settings including, relationships, token bindings, resource factories,
+	 * to their initial, unmodified state. This method is useful for testing when multiple servers
+	 * are created one after another and must have clean state at startup. 
+	 */
+	public static void reset()
+	{
+		INSTANCE._initialize();
 	}
 
 
