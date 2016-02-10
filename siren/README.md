@@ -28,7 +28,7 @@ Stable:
 <dependency>
     <groupId>com.strategicgains</groupId>
     <artifactId>HyperExpress-HAL</artifactId>
-    <version>2.2</version>
+    <version>2.6</version>
 </dependency>
 ```
 
@@ -38,7 +38,7 @@ Development:
 <dependency>
     <groupId>com.strategicgains</groupId>
     <artifactId>HyperExpress-HAL</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>2.7-SNAPSHOT</version>
 </dependency>
 ```
 Or search Maven Central here: http://search.maven.org/#search%7Cga%7C1%7Chyperexpress-hal
