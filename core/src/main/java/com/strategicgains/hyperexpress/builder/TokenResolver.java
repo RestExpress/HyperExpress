@@ -70,6 +70,14 @@ public interface TokenResolver
 	public void remove(String tokenName);
 
 	/**
+	 * Returns true if the given tokenName has an existing binding.
+	 * 
+	 * @param tokenName the name of a token.
+	 * @return true if the token is bound in this TokenResolver. Otherwise, false.
+	 */
+	public boolean contains(String tokenName);
+
+	/**
 	 * Install a callback TokenBinder instance. During the resolve() methods that
 	 * take an Object instance such as, resolve(String, Object) and
 	 * resolve(Collection<String>, Object), the TokenBinder.bind(Object) method

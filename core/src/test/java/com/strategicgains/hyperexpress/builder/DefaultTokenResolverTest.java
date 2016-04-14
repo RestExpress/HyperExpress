@@ -31,7 +31,17 @@ public class DefaultTokenResolverTest
 		});
 
 	@Test
-	public void shouldHandlNullObject()
+	public void testContains()
+	{
+		assertTrue(resolver.contains("a"));
+		assertTrue(resolver.contains("b"));
+		assertTrue(resolver.contains("c"));
+		assertTrue(resolver.contains("d"));
+		assertFalse(resolver.contains("e"));
+	}
+
+	@Test
+	public void shouldHandleNullObject()
 	{
 		Collection<String> urls = resolver.resolve(Arrays.asList(URLS));
 		assertNotNull(urls);
