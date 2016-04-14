@@ -235,6 +235,22 @@ public class HyperExpress
 	}
 
 	/**
+	 * Returns the underlying TokenResolver instance so it can be used in other
+	 * calls, for example, to a UrlBuilder.build() call.
+	 * 
+	 * @return the underlying TokenResolve, or a new one if one isn't already assigned.
+	 */
+	public static TokenResolver tokenResolver()
+	{
+		return INSTANCE._acquireTokenResolver();
+	}
+
+	public static boolean isBound(String token)
+	{
+		return INSTANCE._acquireTokenResolver().contains(token);
+	}
+
+	/**
 	 * Bind a TokenBinder to the elements in a collection resource.
 	 * When a collection resource is created via createCollectionResource(),
 	 * the TokenBinder is called for each element in the collection to bind
