@@ -324,11 +324,20 @@ public class HyperExpress
 			if (Resource.class.isAssignableFrom(component.getClass()))
 			{
 				childResource = (Resource) component;
-				_assignResourceLinks(childResource, component, componentType);
+
+				if (!childResource.hasLinks())
+				{
+					_assignResourceLinks(childResource, component, componentType);
+				}
 			}
 			else
 			{
 				childResource = _createResource(component, contentType);
+			}
+
+			if (childResource != null)
+			{
+				resources.add(childResource);
 			}
 		}
 

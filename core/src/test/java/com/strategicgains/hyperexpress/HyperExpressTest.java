@@ -310,6 +310,44 @@ public class HyperExpressTest
 	}
 
 	@Test
+	public void shouldCreateResourcesFromObjectCollection()
+	{
+		Collection<Entry> resources = new ArrayList<Entry>();
+		resources.add(new Entry());
+		Collection<Resource> c = HyperExpress.createResources(resources, Entry.class, "*");
+		assertNotNull(c);
+		assertEquals(1, c.size());
+		Resource r = c.iterator().next();
+		assertTrue(r.hasNamespaces());
+		assertEquals(2, r.getNamespaces().size());
+		assertTrue(r.hasLinks());
+		assertEquals(1, r.getLinks().size());
+		assertEquals("self", r.getLinks().get(0).getRel());
+		assertEquals("/entries/{entryId}", r.getLinks().get(0).getHref());
+		assertFalse(r.hasProperties());
+		assertFalse(r.hasResources());
+	}
+
+	@Test
+	public void shouldCreateResourcesFromResourceCollection()
+	{
+		Collection<Resource> resources = new ArrayList<Resource>();
+		resources.add(HyperExpress.createResource(new Entry(), "*"));
+		Collection<Resource> c = HyperExpress.createResources(resources, Entry.class, "*");
+		assertNotNull(c);
+		assertEquals(1, c.size());
+		Resource r = c.iterator().next();
+		assertTrue(r.hasNamespaces());
+		assertEquals(2, r.getNamespaces().size());
+		assertTrue(r.hasLinks());
+		assertEquals(1, r.getLinks().size());
+		assertEquals("self", r.getLinks().get(0).getRel());
+		assertEquals("/entries/{entryId}", r.getLinks().get(0).getHref());
+		assertFalse(r.hasProperties());
+		assertFalse(r.hasResources());
+	}
+
+	@Test
 	public void shouldCreateCollectionResourceFromResourceCollection()
 	{
 		Collection<Resource> resources = new ArrayList<Resource>();
