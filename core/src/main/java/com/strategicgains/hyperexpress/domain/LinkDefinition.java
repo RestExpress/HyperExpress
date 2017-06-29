@@ -43,6 +43,11 @@ implements Link
 
 	private Map<String, String> attributes = new HashMap<String, String>();
 
+	LinkDefinition()
+	{
+		super();
+	}
+
 	public LinkDefinition(String rel, String href)
 	{
 		super();
