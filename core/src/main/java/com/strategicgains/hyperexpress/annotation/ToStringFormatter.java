@@ -25,6 +25,8 @@ implements TokenFormatter
 	@Override
 	public String format(Object field)
 	{
+		if (field == null) return "";
+
 		return field.toString();
 	}
 }
