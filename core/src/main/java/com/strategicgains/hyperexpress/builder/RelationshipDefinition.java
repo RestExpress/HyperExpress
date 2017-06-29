@@ -459,8 +459,5 @@ public class RelationshipDefinition
 		return (builders != null 
 			? Collections.<LinkBuilder> unmodifiableList(builders)
 			: Collections.<LinkBuilder> emptyList());
-//		if (builders != null) return Collections.<LinkBuilder> unmodifiableList(builders);
-//
-//		return Collections.<LinkBuilder> emptyList();
 	}
 }
