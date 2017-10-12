@@ -108,10 +108,7 @@ implements TokenBinder<Object>
 						value = Objects.property(annotation.field(), value);
 					}
 					
-					if (value != null)
-					{
-						bindAnnotatedProperty(annotation, value, resolver);
-					}
+					bindAnnotatedProperty(annotation, value, resolver);
 				}
 			}
 		}
@@ -160,6 +157,12 @@ implements TokenBinder<Object>
 	private void bindAnnotatedProperty(BindToken annotation, Object field, TokenResolver resolver)
 	throws InstantiationException, IllegalAccessException
 	{
+		if (field == null)
+		{
+			resolver.remove(annotation.value());
+			return;
+		}
+
 		Class<? extends TokenFormatter> formatterClass = annotation.formatter();
 		TokenFormatter formatter = formatters.get(formatterClass);
 

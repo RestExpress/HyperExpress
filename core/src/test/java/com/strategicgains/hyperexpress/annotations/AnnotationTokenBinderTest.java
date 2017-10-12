@@ -23,6 +23,32 @@ public class AnnotationTokenBinderTest
 		tr.binder(atb);
 		String result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}", a);
 		assertEquals("bc697197-d5af-4c40-8c9f-5f1f4045cf19,a string,6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},got_it,7630d885-0af8-428b-bfea-91a95d597932", result);
+		a.string = null;
+		a.b.c.value = null;
+		result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}", a);
+		assertEquals("bc697197-d5af-4c40-8c9f-5f1f4045cf19,{string},6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},{bValue},7630d885-0af8-428b-bfea-91a95d597932", result);
+	}
+
+	@Test
+	public void shouldRemoveResolver()
+	{
+		Annotated a = new Annotated();
+		AnnotationTokenBinder atb = new AnnotationTokenBinder();
+		TokenResolver tr = new DefaultTokenResolver();
+		tr.binder(atb);
+
+		a.string = null;
+		a.b.c.value = null;
+		String result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}", a);
+		assertEquals("bc697197-d5af-4c40-8c9f-5f1f4045cf19,{string},6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},{bValue},7630d885-0af8-428b-bfea-91a95d597932", result);
+
+		a.b.c = null;
+		result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}", a);
+		assertEquals("bc697197-d5af-4c40-8c9f-5f1f4045cf19,{string},6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},{bValue},7630d885-0af8-428b-bfea-91a95d597932", result);
+
+		a.b = null;
+		result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}", a);
+		assertEquals("bc697197-d5af-4c40-8c9f-5f1f4045cf19,{string},6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},{bValue},7630d885-0af8-428b-bfea-91a95d597932", result);
 	}
 
 	@Test
@@ -44,6 +70,30 @@ public class AnnotationTokenBinderTest
 		atb.bind(a, tr);
 		String result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}");
 		assertEquals("bc697197-d5af-4c40-8c9f-5f1f4045cf19,a string,6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},got_it,7630d885-0af8-428b-bfea-91a95d597932", result);
+	}
+
+	@Test
+	public void shouldRemoveBindings()
+	{
+		Annotated a = new Annotated();
+		AnnotationTokenBinder atb = new AnnotationTokenBinder();
+		TokenResolver tr = new DefaultTokenResolver();
+		atb.bind(a, tr);
+		a.string = null;
+		a.b.c.value = null;
+		atb.bind(a, tr);
+		String result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}");
+		assertEquals("bc697197-d5af-4c40-8c9f-5f1f4045cf19,{string},6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},{bValue},7630d885-0af8-428b-bfea-91a95d597932", result);
+
+		a.b.c = null;
+		atb.bind(a, tr);
+		result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}");
+		assertEquals("bc697197-d5af-4c40-8c9f-5f1f4045cf19,{string},6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},{bValue},7630d885-0af8-428b-bfea-91a95d597932", result);
+
+		a.b = null;
+		atb.bind(a, tr);
+		result = tr.resolve("{id},{string},{UUID},{intValue},{notBound},{bValue},{dId}");
+		assertEquals("bc697197-d5af-4c40-8c9f-5f1f4045cf19,{string},6777a80b-88f1-4e66-88d6-c88ffc164050,42,{notBound},{bValue},7630d885-0af8-428b-bfea-91a95d597932", result);
 	}
 
 	@TokenBindings({
@@ -76,7 +126,6 @@ public class AnnotationTokenBinderTest
 
 	private class B
 	{
-		@SuppressWarnings("unused")
 		private C c = new C();
 	}
 
