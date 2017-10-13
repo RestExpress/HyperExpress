@@ -1,5 +1,13 @@
 HyperExpress Release Notes
 ==========================
+2.7 SNAPSHOT - in Master
+------------------------
+* Issue #23 - Bindings in Collections echo
+* Issue #18 - Need underlying TokenResolver
+* Issue #17 - HyperExpress.isBound()
+* Issue #16 - HyperExpressPlugin errors in tests
+* Issue #15 - Bind via annotations
+
 
 2.4 Release - 24 Jul 2015
 -------------------------
