@@ -20,6 +20,7 @@
 		<module>hal</module>
 		<module>restexpress</module>
 		<module>siren</module>
+		<module>naked</module>
 	</modules>
 
 	<dependencies>
