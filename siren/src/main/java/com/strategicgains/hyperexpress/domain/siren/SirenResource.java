@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.strategicgains.hyperexpress.domain.AbstractResource;
-import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
  * A Siren Resource instance, containing class, properties, entities, actions, links.
@@ -33,7 +32,6 @@ import com.strategicgains.hyperexpress.domain.Resource;
  */
 public class SirenResource
 extends AbstractResource
-implements Resource
 {
 	private String title;
 	private Set<String> classes = new HashSet<String>(1);
