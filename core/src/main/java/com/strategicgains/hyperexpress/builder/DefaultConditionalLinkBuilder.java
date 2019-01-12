@@ -152,7 +152,8 @@ implements ConditionalLinkBuilder
 				}
 			}
 		}
-		else if (isOptional() && link.hasToken())
+		
+		if (isOptional() && link.hasToken())
 		{
 			return null;
 		}
@@ -165,7 +166,7 @@ implements ConditionalLinkBuilder
 	{
 		Link link = super.build();
 
-		if (isOptional() && link.hasToken())
+		if (isOptional() && link != null && link.hasToken())
 		{
 			return null;
 		}

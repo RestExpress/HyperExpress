@@ -23,6 +23,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.strategicgains.hyperexpress.RelTypes;
+import com.strategicgains.hyperexpress.annotation.BindToken;
 import com.strategicgains.hyperexpress.domain.Link;
 
 /**
@@ -34,69 +35,6 @@ public class DefaultLinkBuilderTest
 	private static final String BASE_URL = "http://localhost:8081";
 	private static final String URL_PATTERN = "/{id}";
 	private static final String URL_PATTERN2 = "/{rootId}/{secondaryId}/{id}";
-
-//	@Test
-//	public void shouldBuildSimpleMultipleIdTemplate()
-//	{
-//		Collection<Link> links = new DefaultLinkBuilder(URL_PATTERN)
-//			.baseUrl(BASE_URL)
-//			.rel(RelTypes.RELATED)
-//			.build("id", "42", "22", "4");
-//
-//		assertEquals(3, links.size());
-//		int i = 0;
-//
-//		for (Link link : links)
-//		{
-//			if (i == 0)
-//			{
-//				assertEquals(BASE_URL + "/42", link.getHref());
-//			}
-//			else if (i == 1)
-//			{
-//				assertEquals(BASE_URL + "/22", link.getHref());				
-//			}
-//			else if (i == 2)
-//			{
-//				assertEquals(BASE_URL + "/4", link.getHref());
-//			}
-//
-//			assertEquals(RelTypes.RELATED, link.getRel());
-//			++i;
-//		}
-//	}
-
-//	@Test
-//	public void shouldBuildComplexMultipleIdTemplate()
-//	{
-//		Collection<Link> links = new DefaultLinkBuilder(URL_PATTERN2)
-//			.baseUrl(BASE_URL)
-//			.rel(RelTypes.DESCRIBED_BY)
-//			.build("id", "42", "22", "4");
-//
-//
-//		assertEquals(3, links.size());
-//		int i = 0;
-//
-//		for (Link link : links)
-//		{
-//			if (i == 0)
-//			{
-//				assertEquals(BASE_URL + "/first/second/42", link.getHref());
-//			}
-//			else if (i == 1)
-//			{
-//				assertEquals(BASE_URL + "/first/second/22", link.getHref());
-//			}
-//			else if (i == 2)
-//			{
-//				assertEquals(BASE_URL + "/first/second/4", link.getHref());
-//			}
-//
-//			assertEquals(RelTypes.DESCRIBED_BY, link.getRel());
-//			++i;
-//		}
-//	}
 
 	@Test
 	public void shouldBuildSimpleSingleIdTemplate()
@@ -183,5 +121,21 @@ public class DefaultLinkBuilderTest
 	public void shouldAllowMissingRel()
 	{
 		new DefaultLinkBuilder(URL_PATTERN).build(new DefaultTokenResolver());
+	}
+
+	@Test
+	public void shouldBindFromObject()
+	{
+		ToBindAnnotated tba = new ToBindAnnotated();
+		tba.id = "12345";
+
+		Link link = new DefaultLinkBuilder(URL_PATTERN).baseUrl(BASE_URL).build(tba, new DefaultTokenResolver(true));
+		assertEquals(BASE_URL + "/12345", link.getHref());
+	}
+
+	public class ToBindAnnotated
+	{
+		@BindToken("id")
+		String id;
 	}
 }
