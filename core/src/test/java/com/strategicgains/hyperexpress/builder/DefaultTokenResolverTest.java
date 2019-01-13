@@ -59,6 +59,20 @@ public class DefaultTokenResolverTest
 	}
 
 	@Test
+	public void shouldUseScopes()
+	{
+		Resolvable r = new Resolvable();
+		r.e = 42;
+		Collection<String> urls = resolver.resolve(Arrays.asList(URLS), r);
+		assertNotNull(urls);
+		verifyUrls(urls, "/a/a/b/b", "/c/c/d/d/e/42", "{f}");
+
+		urls = resolver.resolve(Arrays.asList(URLS));
+		assertNotNull(urls);
+		verifyUrls(urls, "/a/a/b/b", "/c/c/d/d/e/{e}", "{f}");
+	}
+
+	@Test
 	public void shouldResolveAdditionalToken()
 	{
 		Resolvable r = new Resolvable();

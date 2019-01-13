@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -49,9 +50,10 @@ implements TokenResolver
 {
 	private static final MapStringFormat FORMATTER = new MapStringFormat();
 
-	private Map<String, String> values = new HashMap<String, String>();
-	private Map<String, Set<String>> multiValues = new HashMap<String, Set<String>>();
-	private List<TokenBinder<?>> binders = new ArrayList<TokenBinder<?>>();
+	private LinkedList<ScopeBindings> scopeStack = new LinkedList<>();
+	private ScopeBindings globals = new ScopeBindings();
+	private ScopeBindings scope = globals;
+	private List<TokenBinder<?>> binders = new ArrayList<>();
 	private boolean bindAnnotations = false;
 
 	/**
@@ -98,15 +100,7 @@ implements TokenResolver
 	 */
 	public DefaultTokenResolver bind(String tokenName, String value)
 	{
-		if (value == null)
-		{
-			remove(tokenName);
-		}
-		else
-		{
-			values.put(tokenName, value);
-		}
-
+		scope.bind(tokenName, value);
 		return this;
 	}
 
@@ -141,25 +135,7 @@ implements TokenResolver
 
 	private void bindExtras(String tokenName, List<String> valueList)
     {
-		if (valueList.size() <= 1)
-		{
-			this.multiValues.remove(tokenName);
-		}
-		else
-		{
-			Set<String> extras = this.multiValues.get(tokenName);
-	
-			if (extras == null)
-			{
-				extras = new LinkedHashSet<String>(valueList.size() - 1);
-				this.multiValues.put(tokenName, extras);
-			}
-
-			for (int i = 1; i < valueList.size(); ++i)
-			{
-				extras.add(valueList.get(i));
-			}
-		}
+		scope.bindExtras(tokenName, valueList);
     }
 
 	/**
@@ -167,8 +143,7 @@ implements TokenResolver
 	 */
 	public void clear()
 	{
-		values.clear();
-		multiValues.clear();
+		scope.clear();
 	}
 
 	/**
@@ -178,8 +153,7 @@ implements TokenResolver
 	 */
 	public void remove(String tokenName)
 	{
-		values.remove(tokenName);
-		multiValues.remove(tokenName);
+		scope.remove(tokenName);
 	}
 
 	/**
@@ -190,8 +164,7 @@ implements TokenResolver
 	 */
 	public boolean contains(String tokenName)
 	{
-		if (values.containsKey(tokenName)) return true;
-		return multiValues.containsKey(tokenName);
+		return scope.contains(tokenName);
 	}
 
 	/**
@@ -246,25 +219,25 @@ implements TokenResolver
 	@Override
 	public String resolve(String pattern)
 	{
-		return FORMATTER.format(pattern, values);
+		return FORMATTER.format(pattern, scope.values);
 	}
 
 	@Override
 	public String[] resolveMulti(String pattern)
 	{
 		List<String> resolved = new ArrayList<String>();
-		String current = FORMATTER.format(pattern, values);
+		String current = FORMATTER.format(pattern, scope.values);
 		resolved.add(current);
 
-		for(Entry<String, Set<String>> entry : multiValues.entrySet())
+		for(Entry<String, Set<String>> entry : scope.multiValues.entrySet())
 		{
-			String firstValue = values.get(entry.getKey());
+			String firstValue = scope.values.get(entry.getKey());
 			Iterator<String> nextValue = entry.getValue().iterator();
 
 			while(nextValue.hasNext())
 			{
-				values.put(entry.getKey(), nextValue.next());
-				String bound = FORMATTER.format(pattern, values);
+				scope.bind(entry.getKey(), nextValue.next());
+				String bound = FORMATTER.format(pattern, scope.values);
 
 				if (!Strings.hasToken(bound))
 				{
@@ -272,7 +245,7 @@ implements TokenResolver
 				}
 			}
 
-			values.put(entry.getKey(), firstValue);
+			scope.bind(entry.getKey(), firstValue);
 		}
 
 		return resolved.toArray(new String[0]);
@@ -295,12 +268,16 @@ implements TokenResolver
 	 */
 	public String resolve(String pattern, Object object)
 	{
-		if (object != null)
+		if (object == null)
 		{
-			callTokenBinders(object);
+			return FORMATTER.format(pattern, scope.values);		
 		}
 
-		return FORMATTER.format(pattern, values);
+		pushScope();
+		callTokenBinders(object);
+		String url = FORMATTER.format(pattern, scope.values);
+		popScope();
+		return url;
 	}
 
 	/**
@@ -336,13 +313,36 @@ implements TokenResolver
 	 */
 	public Collection<String> resolve(Collection<String> patterns, Object object)
 	{
-		if (object != null)
+		if (object == null)
 		{
-			callTokenBinders(object);
+			return resolve(patterns);
 		}
 
-		return resolve(patterns);
+		pushScope();
+		callTokenBinders(object);
+		Collection<String> urls = resolve(patterns);
+		popScope();
+		return urls;
 	}
+
+	@Override
+	public String toString()
+	{
+		StringBuilder s = new StringBuilder();
+	    s.append("{");
+		s.append("bindAnnotations=");
+		s.append(bindAnnotations);
+
+		for (Entry<String, String> entry : scope.values.entrySet())
+		{
+			s.append(", ");
+			s.append(entry.getKey());
+			s.append("=");
+			s.append(entry.getValue());
+		}
+
+		return s.toString();
+    }
 
 	/**
 	 * Call the installed TokenBinder instances, calling bind() for each one
@@ -372,21 +372,109 @@ implements TokenResolver
 		}
 	}
 
-	public String toString()
+	/**
+	 * Pushes a new object scope on the stack. A call to popScope() will remove it.
+	 * 
+	 * @return this token resolver to facilitate method chaining.
+	 */
+	private TokenResolver pushScope()
 	{
-		StringBuilder s = new StringBuilder();
-	    s.append("{");
-		s.append("bindAnnotations=");
-		s.append(bindAnnotations);
+		scope = new ScopeBindings(globals);
+		scopeStack.push(scope);
+		return this;
+	}
 
-		for (Entry<String, String> entry : values.entrySet())
+	/**
+	 * Remove all bound tokens that correspond to bindObject() calls. Does not remove
+	 * values bound using bind() methods. Nor does it remove binder callbacks.
+	 */
+	private TokenResolver popScope()
+	{
+		// Remove current scope from the stack.
+		if (!scopeStack.isEmpty())
 		{
-			s.append(", ");
-			s.append(entry.getKey());
-			s.append("=");
-			s.append(entry.getValue());
+			scopeStack.pop();
 		}
 
-		return s.toString();
-    }
+		// Reassign current scope to top of stack.
+		if (!scopeStack.isEmpty())
+		{
+			scope = scopeStack.peek();
+		}
+		else scope = globals;
+		return this;
+	}
+
+	private class ScopeBindings
+	{
+		private Map<String, String> values;
+		private Map<String, Set<String>> multiValues;
+
+		public ScopeBindings()
+		{
+			super();
+			values = new HashMap<>();
+			multiValues = new HashMap<>();
+		}
+
+		public ScopeBindings(ScopeBindings bindings)
+		{
+			super();
+			values = new HashMap<>(bindings.values);
+			multiValues = new HashMap<>(bindings.multiValues);
+		}
+
+		public void bind(String tokenName, String value)
+		{
+			if (value == null)
+			{
+				remove(tokenName);
+			}
+			else
+			{
+				values.put(tokenName, value);
+			}
+		}
+
+		public void clear()
+		{
+			values.clear();
+			multiValues.clear();
+		}
+
+		public void bindExtras(String tokenName, List<String> valueList)
+	    {
+			if (valueList.size() <= 1)
+			{
+				this.multiValues.remove(tokenName);
+			}
+			else
+			{
+				Set<String> extras = this.multiValues.get(tokenName);
+		
+				if (extras == null)
+				{
+					extras = new LinkedHashSet<String>(valueList.size() - 1);
+					this.multiValues.put(tokenName, extras);
+				}
+
+				for (int i = 1; i < valueList.size(); ++i)
+				{
+					extras.add(valueList.get(i));
+				}
+			}
+	    }
+
+		public void remove(String tokenName)
+		{
+			values.remove(tokenName);
+			multiValues.remove(tokenName);
+		}
+
+		public boolean contains(String tokenName)
+		{
+			if (values.containsKey(tokenName)) return true;
+			return multiValues.containsKey(tokenName);
+		}
+	}
 }
