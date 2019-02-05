@@ -123,11 +123,9 @@ extends AbstractPlugin
 	 * @param contentType
 	 * @return
 	 */
-	public HyperExpressPlugin addResourceFactory(
-	    ResourceFactoryStrategy factoryStrategy, String contentType)
+	public HyperExpressPlugin addResourceFactory(ResourceFactoryStrategy factoryStrategy, String contentType)
 	{
-		HyperExpress.registerResourceFactoryStrategy(factoryStrategy,
-		    contentType);
+		HyperExpress.registerResourceFactoryStrategy(factoryStrategy, contentType);
 		usesCustomFactory = true;
 		return this;
 	}
@@ -143,8 +141,7 @@ extends AbstractPlugin
 	 * @param callback
 	 *            an {@link ExpansionCallback} instance.
 	 */
-	public HyperExpressPlugin registerCallback(Class<?> type,
-	    ExpansionCallback callback)
+	public HyperExpressPlugin registerCallback(Class<?> type, ExpansionCallback callback)
 	{
 		Expander.registerCallback(type, callback);
 		return this;
