@@ -5,6 +5,11 @@ implements Reference<T>
 {
 	private T id;
 
+	public ReferenceDefinition()
+	{
+		super();
+	}
+
 	public ReferenceDefinition(T id)
 	{
 		super();
