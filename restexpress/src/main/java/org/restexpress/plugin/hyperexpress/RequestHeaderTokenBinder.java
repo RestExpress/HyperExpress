@@ -37,14 +37,22 @@ import com.strategicgains.hyperexpress.HyperExpress;
 public class RequestHeaderTokenBinder
 implements Preprocessor
 {
+	private static final String BASE_URL_TOKEN = "baseUrl";
+	private static final String REFERER_HEADER_NAME = "referer";
+
 	@Override
 	public void process(Request request)
 	{
-		String host = request.getHost();
+		String host = request.getHeader(REFERER_HEADER_NAME);
+
+		if (host == null)
+		{
+			host = request.getHost();
+		}
 
 		if (host != null)
 		{
-			HyperExpress.bind("baseUrl", request.getBaseUrl());
+			HyperExpress.bind(BASE_URL_TOKEN, request.getProtocol() + "://" + host);
 		}
 
 		for (String token : request.getHeaderNames())
