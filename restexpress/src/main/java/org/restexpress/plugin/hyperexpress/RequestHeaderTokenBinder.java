@@ -43,16 +43,15 @@ implements Preprocessor
 	@Override
 	public void process(Request request)
 	{
-		String host = request.getHeader(REFERER_HEADER_NAME);
+		String referrer = request.getHeader(REFERER_HEADER_NAME);
 
-		if (host == null)
+		if (referrer != null)
 		{
-			host = request.getHost();
+			HyperExpress.bind(BASE_URL_TOKEN, request.getScheme() + "://" + referrer);			
 		}
-
-		if (host != null)
+		else // use HOST header
 		{
-			HyperExpress.bind(BASE_URL_TOKEN, request.getProtocol() + "://" + host);
+			HyperExpress.bind(BASE_URL_TOKEN, request.getBaseUrl());
 		}
 
 		for (String token : request.getHeaderNames())
