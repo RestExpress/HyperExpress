@@ -18,8 +18,8 @@
 	<modules>
 		<module>core</module>
 		<module>hal</module>
-		<module>restexpress</module>
 		<module>siren</module>
+		<module>restexpress</module>
 	</modules>
 
 	<dependencies>
