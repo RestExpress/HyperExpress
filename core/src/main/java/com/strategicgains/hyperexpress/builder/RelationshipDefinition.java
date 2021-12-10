@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import com.strategicgains.hyperexpress.BuilderFactory;
 import com.strategicgains.hyperexpress.domain.Namespace;
@@ -367,6 +368,34 @@ public class RelationshipDefinition
 		if (linkBuilder == null) throw new RelationshipException("Attempt to set ifBound() on null link: " + token + ". Call 'rel()' first.");
 
 		linkBuilder.ifBound(token);
+		return this;
+	}
+
+	/**
+	 * Indicates that the link should be included in a response if the provided token
+	 * gets bound and matches the given predicate. This is useful for links that are
+	 * conditional in the response depending on information NOT in the link URL.
+	 * <p/>
+	 * For example: definition.ifBound("{role}", r -> "superadmin".equals(r);
+	 * <p/>
+	 * Then for binding, anything other than "false" or null will include the link in the output.
+	 * <p/>
+	 * For example:<br/>
+	 * String role = "superadmin";<br/>
+	 * HyperExpress.bind("role", role);<br/>
+	 * 
+	 * Now this link will only be included for resources where the 'role' token gets
+	 * bound to the value 'superadmin'.
+	 * 
+	 * @param token a URL token name, with or without beginning and ending curly-braces.
+	 * @param predicate the predicate to test on the value of the bound token.
+	 * @return this relationship definition instance to facilitate method chaining.
+	 */
+	public RelationshipDefinition ifBound(String token, Predicate<String> predicate)
+	{
+		if (linkBuilder == null) throw new RelationshipException("Attempt to set ifBound() on null link: " + token + ". Call 'rel()' first.");
+
+		linkBuilder.ifBound(token, predicate);
 		return this;
 	}
 
