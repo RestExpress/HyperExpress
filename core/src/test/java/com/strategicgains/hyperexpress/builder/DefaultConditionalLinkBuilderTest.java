@@ -99,6 +99,46 @@ public class DefaultConditionalLinkBuilderTest
 		assertNull(lb.build(tbb, new DefaultTokenResolver(true)));
 	}
 
+	@Test
+	public void shouldBuildHonorBoundPredicateAndOptional()
+	{
+		ConditionalLinkBuilder lb = (ConditionalLinkBuilder) new DefaultConditionalLinkBuilder("/accounts/{accountId}/clients?offset={nextOffset}")
+			.baseUrl(BASE_URL)
+			.rel(RelTypes.SELF)
+			.withQuery("limit={limit}")
+			.withQuery("filter={filter}")
+			.withQuery("sort={sort}");
+		lb.ifBound("accountId", s -> "12345".equals(s));
+		lb.optional();
+
+		ToBeBound tbb = new ToBeBound();
+		assertNull(lb.build());
+		assertNull(lb.build(new DefaultTokenResolver()));
+		assertNull(lb.build(new DefaultTokenResolver(true)));
+		assertNull(lb.build(tbb, new DefaultTokenResolver(true)));
+		tbb.id = "12345";
+		assertNull(lb.build());
+		assertNull(lb.build(new DefaultTokenResolver()));
+		assertNull(lb.build(new DefaultTokenResolver(true)));
+		assertNull(lb.build(tbb, new DefaultTokenResolver(true)));
+		tbb.offset = "42";
+		assertNull(lb.build());
+		assertNull(lb.build(new DefaultTokenResolver()));
+		assertNull(lb.build(new DefaultTokenResolver(true)));
+		assertEquals(BASE_URL + "/accounts/12345/clients?offset=42", lb.build(tbb, new DefaultTokenResolver(true)).getHref());
+		tbb.id = "54321";
+		assertNull(lb.build());
+		assertNull(lb.build(new DefaultTokenResolver()));
+		assertNull(lb.build(new DefaultTokenResolver(true)));
+		assertNull(lb.build(tbb, new DefaultTokenResolver(true)));
+		tbb.id = "12345";
+		tbb.offset = null;
+		assertNull(lb.build());
+		assertNull(lb.build(new DefaultTokenResolver()));
+		assertNull(lb.build(new DefaultTokenResolver(true)));
+		assertNull(lb.build(tbb, new DefaultTokenResolver(true)));
+	}
+
 	public class ToBeBound
 	{
 		@BindToken("accountId")

@@ -163,7 +163,7 @@ method, although it can be created outside the HyperExpress singleton class also
 Let's say we have a Blogging system with Blog, Entry and Comment resources. RelationshipDefinition
 syntax for some of the relationships between them might be as follows:
 
-**Caveat:** a Relationship definition captures the canonical or static relationships for a given type (or class). To add dynamic, context-sensitive links, you'll need to add them to the Resource yourself using Resource.addLink() methods.
+**Caveat:** a Relationship definition captures the canonical or static relationships for a given type (or class). To add dynamic, context-sensitive links, you'll need to add them to the Resource yourself using Resource.addLink() methods. However, you can also use the ifBound(), ifNotBound(), optional() methods on links to make them conditional.
 
 ```java
 import static com.strategicgains.hyperexpress.RelTypes.*;

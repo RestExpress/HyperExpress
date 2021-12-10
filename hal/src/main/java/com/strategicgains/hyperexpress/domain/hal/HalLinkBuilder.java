@@ -39,13 +39,13 @@ extends DefaultConditionalLinkBuilder
 
 	public HalLinkBuilder templated(boolean value)
 	{
-		if (value == false)
+		if (value)
 		{
-			set(TEMPLATED, null);
+			set(TEMPLATED, Boolean.TRUE.toString());
 		}
 		else
 		{
-			set(TEMPLATED, Boolean.TRUE.toString());
+			set(TEMPLATED, null);
 		}
 
 		return this;
@@ -59,17 +59,17 @@ extends DefaultConditionalLinkBuilder
 
 	public HalLinkBuilder deprecation(String deprecation)
 	{
-		return (HalLinkBuilder) set(DEPRECATION, deprecation);
+		return set(DEPRECATION, deprecation);
 	}
 
 	public HalLinkBuilder name(String name)
 	{
-		return (HalLinkBuilder) set(NAME, name);
+		return set(NAME, name);
 	}
 
 	public HalLinkBuilder profile(String profile)
 	{
-		return (HalLinkBuilder) set(PROFILE, profile);
+		return set(PROFILE, profile);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ extends DefaultConditionalLinkBuilder
 
 	public HalLinkBuilder hreflang(String hreflang)
 	{
-		return (HalLinkBuilder) set(HREFLANG, hreflang);
+		return set(HREFLANG, hreflang);
 	}
 
 	@Override

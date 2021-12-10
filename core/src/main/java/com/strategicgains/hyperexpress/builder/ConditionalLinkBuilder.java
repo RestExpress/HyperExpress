@@ -16,6 +16,9 @@
 package com.strategicgains.hyperexpress.builder;
 
 import java.util.List;
+import java.util.function.Predicate;
+
+import com.strategicgains.hyperexpress.builder.DefaultConditionalLinkBuilder.Conditional;
 
 /**
  * Extends LinkBuilder, adding an 'optional' flag, where the value can either be "true" or
@@ -37,9 +40,11 @@ extends LinkBuilder
 
 	public void ifNotBound(String token);
 
+	public void ifBound(String token, Predicate<String> predicate);
+
 	public boolean isOptional();
 
 	public boolean hasConditionals();
 
-	public List<String> getConditionals();
+	public List<Conditional> getConditionals();
 }

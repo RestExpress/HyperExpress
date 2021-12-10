@@ -17,6 +17,7 @@ package com.strategicgains.hyperexpress.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import com.strategicgains.hyperexpress.domain.Link;
 
@@ -36,7 +37,7 @@ extends DefaultLinkBuilder
 implements ConditionalLinkBuilder
 {
 	private boolean optional = false;
-	private List<String> conditionals = new ArrayList<String>();
+	private List<Conditional> conditionals = new ArrayList<>();
 
 	public DefaultConditionalLinkBuilder()
     {
@@ -66,7 +67,7 @@ implements ConditionalLinkBuilder
 	public DefaultConditionalLinkBuilder(DefaultConditionalLinkBuilder builder)
 	{
 		super(builder);
-		this.conditionals = new ArrayList<String>(builder.conditionals);
+		this.conditionals = new ArrayList<>(builder.conditionals);
 	}
 
 	public void optional()
@@ -76,6 +77,11 @@ implements ConditionalLinkBuilder
 
 	public void ifBound(String token)
 	{
+		ifBound(token, null);
+	}
+
+	public void ifBound(String token, Predicate<String> predicate)
+	{
 		if (token == null)
 		{
 			return;
@@ -83,11 +89,11 @@ implements ConditionalLinkBuilder
 
 		if (token.startsWith("{") && token.endsWith("}"))
 		{
-			conditionals.add(token);
+			conditionals.add(new Conditional(token, predicate));
 		}
 		else
 		{
-			conditionals.add("{" + token + "}");
+			conditionals.add(new Conditional("{" + token + "}", predicate));
 		}
 	}
 
@@ -100,11 +106,11 @@ implements ConditionalLinkBuilder
 
 		if (token.startsWith("{") && token.endsWith("}"))
 		{
-			conditionals.add("!" + token);
+			conditionals.add(new Conditional("!" + token));
 		}
 		else
 		{
-			conditionals.add("!{" + token + "}");
+			conditionals.add(new Conditional("!{" + token + "}"));
 		}
 	}
 
@@ -118,7 +124,7 @@ implements ConditionalLinkBuilder
 		return (conditionals != null && !conditionals.isEmpty());
 	}
 
-	public List<String> getConditionals()
+	public List<Conditional> getConditionals()
 	{
 		return conditionals;
 	}
@@ -131,25 +137,11 @@ implements ConditionalLinkBuilder
 
 		if (hasConditionals())
 		{
-			for (String conditional : conditionals)
+			for (Conditional conditional : conditionals)
 			{
-				String value = tokenResolver.resolve(conditional, object);
+				String value = tokenResolver.resolve(conditional.token, object);
 
-				// not bound
-				if ((value.startsWith("{") && value.endsWith("}"))
-					|| value.trim().equalsIgnoreCase(Boolean.FALSE.toString()))
-				{
-					return null;
-				}
-				// desire not bound
-				else if (value.startsWith("!"))
-				{
-					if (!(value.startsWith("!{") && value.endsWith("}"))
-						&& !value.substring(1).trim().equalsIgnoreCase(Boolean.FALSE.toString()))
-					{
-						return null;
-					}
-				}
+				if (!conditional.test(value)) return null;
 			}
 		}
 		
@@ -185,5 +177,61 @@ implements ConditionalLinkBuilder
 		}
 
 		return link;
+	}
+
+	public class Conditional
+	{
+		private String token;
+		private Predicate<String> predicate;
+
+		public Conditional(String token)
+		{
+			this(token, null);
+		}
+
+		public Conditional(String token, Predicate<String> predicate)
+		{
+			super();
+			this.predicate = predicate;
+			this.token = token;
+		}
+
+		public boolean test(String value)
+		{
+			if (!isBound(value) || isFalse(value))
+			{
+				return false;
+			}
+			else if (shouldBeUnbound()) 
+			{
+				String val = value.substring(1);
+
+				if (isBound(val) && !isFalse(val))
+				{
+					return false;
+				}
+			}
+			else if (predicate != null)
+			{
+				return predicate.test(value);
+			}
+
+			return true;
+		}
+
+		private boolean shouldBeUnbound()
+		{
+			return token.startsWith("!");
+		}
+
+		private boolean isBound(String value)
+		{
+			return !(value.startsWith("{") && value.endsWith("}"));
+		}
+
+		private boolean isFalse(String value)
+		{
+			return Boolean.FALSE.toString().equalsIgnoreCase(value.trim());
+		}
 	}
 }
