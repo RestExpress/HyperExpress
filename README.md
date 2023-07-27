@@ -1,7 +1,3 @@
-**Build Status** [![Build Status](https://buildhive.cloudbees.com/job/RestExpress/job/HyperExpress/badge/icon)](https://buildhive.cloudbees.com/job/RestExpress/job/HyperExpress/)
-
-**Waffle.io** [![Stories in Ready](https://badge.waffle.io/RestExpress/HyperExpress.png?label=ready)](https://waffle.io/RestExpress/HyperExpress)
-
 [(Video) Introduction to HyperExpress](http://www.youtube.com/watch?v=TQqc7goKVsM&list=UUzaZL1VLtdVTiZ8k07z65jg&feature=share)
 
 HyperExpress
