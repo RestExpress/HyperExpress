@@ -15,6 +15,7 @@
  */
 package com.strategicgains.hyperexpress.util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,8 +26,8 @@ import java.util.Map.Entry;
  */
 public class MapStringFormat
 {
-	private final static String DEFAULT_END_DELIMITER = "}";
-	private final static String DEFAULT_START_DELIMITER = "{";
+	private static final String DEFAULT_END_DELIMITER = "}";
+	private static final String DEFAULT_START_DELIMITER = "{";
 
 
 	// PROTOCOL: VARIABLES
@@ -104,15 +105,17 @@ public class MapStringFormat
 	private String constructParameterName(StringBuilder sb, String key)
 	{
 		sb.setLength(0);
-		sb.append('\\');
-		sb.append(startDelimiter());
+		sb.append(escape(startDelimiter()));
 		sb.append(key);
-		sb.append('\\');
-		sb.append(endDelimiter());
+		sb.append(escape(endDelimiter()));
 		return sb.toString();
 	}
 
 	// SECTION: UTILITY - STATIC
+
+	private String escape(String delimeter) {
+		return delimeter.replaceAll("([\\\\*+\\[\\](){}\\$.?\\^|])", "\\\\$1");
+	}
 
 	/**
 	 * Converts a sequence of strings into name/value pairs in a map. Pairs must
@@ -125,13 +128,13 @@ public class MapStringFormat
 	 */
 	public static Map<String, String> toMap(String... nameValuePairs)
 	{
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> result = new HashMap<>();
 
 		if (nameValuePairs == null) return result;
 
 		if ((nameValuePairs.length % 2) != 0)
 		{
-			throw new IllegalArgumentException("Name/value pairs unbalanced: " + nameValuePairs.toString());
+			throw new IllegalArgumentException("Name/value pairs unbalanced: " + Arrays.toString(nameValuePairs));
 		}
 
 		for (int i = 0; i < nameValuePairs.length; i += 2)

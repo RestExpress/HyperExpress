@@ -30,17 +30,26 @@ import org.junit.Test;
  */
 public class MapStringFormatTest
 {
+	private static final String FREDRICH_TODD_A = "Fredrich, Todd A.";
+
 	@Test
 	public void shouldFormatWithDefaultDelimiters()
 	{
 		MapStringFormat formatter = new MapStringFormat();
 		String template = "{last_name}, {first_name} {middle_initial}.";
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("first_name", "Todd");
-		parameters.put("middle_initial", "A");
-		parameters.put("last_name", "Fredrich");
+		Map<String, String> parameters = createParameters();
 		String result = formatter.format(template, parameters);
-		assertEquals("Fredrich, Todd A.", result);
+		assertEquals(FREDRICH_TODD_A, result);
+	}
+
+	@Test
+	public void shouldFormatWithEscapedDelimiters()
+	{
+		MapStringFormat formatter = new MapStringFormat("{{", "}}");
+		String template = "{{last_name}}, {{first_name}} {{middle_initial}}.";
+		Map<String, String> parameters = createParameters();
+		String result = formatter.format(template, parameters);
+		assertEquals(FREDRICH_TODD_A, result);
 	}
 
 	@Test
@@ -48,8 +57,8 @@ public class MapStringFormatTest
 	{
 		MapStringFormat formatter = new MapStringFormat();
 		String template = "{last_name}, {first_name} {middle_initial}.";
-		String result = formatter.format(template, "first_name", "Todd", "middle_initial", "A", "last_name", "Fredrich");
-		assertEquals("Fredrich, Todd A.", result);
+		String result = formatter.format(template, createParameterArray());
+		assertEquals(FREDRICH_TODD_A, result);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
@@ -66,12 +75,9 @@ public class MapStringFormatTest
 	{
 		MapStringFormat formatter = new MapStringFormat("[", "]");
 		String template = "[last_name], [first_name] [middle_initial].";
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("first_name", "Todd");
-		parameters.put("middle_initial", "A");
-		parameters.put("last_name", "Fredrich");
+		Map<String, String> parameters = createParameters();
 		String result = formatter.format(template, parameters);
-		assertEquals("Fredrich, Todd A.", result);
+		assertEquals(FREDRICH_TODD_A, result);
 	}
 
 	@Test
@@ -79,12 +85,9 @@ public class MapStringFormatTest
 	{
 		MapStringFormat formatter = new MapStringFormat("<start>", "<end>");
 		String template = "<start>last_name<end>, <start>first_name<end> <start>middle_initial<end>.";
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("first_name", "Todd");
-		parameters.put("middle_initial", "A");
-		parameters.put("last_name", "Fredrich");
+		Map<String, String> parameters = createParameters();
 		String result = formatter.format(template, parameters);
-		assertEquals("Fredrich, Todd A.", result);
+		assertEquals(FREDRICH_TODD_A, result);
 	}
 	
 	@Test
@@ -111,4 +114,21 @@ public class MapStringFormatTest
 		assertNotNull(pairs);
 		assertTrue(pairs.isEmpty());
 	}
+
+	private Map<String, String> createParameters() {
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("first_name", "Todd");
+		parameters.put("middle_initial", "A");
+		parameters.put("last_name", "Fredrich");
+		return parameters;
+	}
+
+	private String[] createParameterArray() {
+		return new String[] {
+			"first_name", "Todd",
+			"middle_initial", "A",
+			"last_name", "Fredrich"
+		};
+	}
+	
 }
