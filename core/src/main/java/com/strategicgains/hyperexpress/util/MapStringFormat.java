@@ -28,12 +28,16 @@ public class MapStringFormat
 {
 	private static final String DEFAULT_END_DELIMITER = "}";
 	private static final String DEFAULT_START_DELIMITER = "{";
+	private static final String ESCAPE_REGEX = "([\\\\*+\\[\\](){}\\$.?\\^|])";
+	private static final String ESCAPE_REPLACEMENT = "\\\\$1";
 
 
 	// PROTOCOL: VARIABLES
 
 	private String endDelimiter;
 	private String startDelimiter;
+	private String escapedStartDelimiter;
+	private String escapedEndDelimiter;
 
 	public MapStringFormat()
 	{
@@ -56,6 +60,7 @@ public class MapStringFormat
 	public void endDelimiter(String delimiter)
 	{
 		endDelimiter = delimiter;
+		escapedEndDelimiter = delimiter != null ? escape(delimiter) : null;
 	}
 
 	public String startDelimiter()
@@ -66,6 +71,7 @@ public class MapStringFormat
 	public void startDelimiter(String delimiter)
 	{
 		startDelimiter = delimiter;
+		escapedStartDelimiter = delimiter != null ? escape(delimiter) : null;
 	}
 
 	public String format(String string, String... parameters)
@@ -105,16 +111,15 @@ public class MapStringFormat
 	private String constructParameterName(StringBuilder sb, String key)
 	{
 		sb.setLength(0);
-		sb.append(escape(startDelimiter()));
+		sb.append(escapedStartDelimiter);
 		sb.append(key);
-		sb.append(escape(endDelimiter()));
+		sb.append(escapedEndDelimiter);
 		return sb.toString();
 	}
 
-	// SECTION: UTILITY - STATIC
-
-	private String escape(String delimeter) {
-		return delimeter.replaceAll("([\\\\*+\\[\\](){}\\$.?\\^|])", "\\\\$1");
+	private String escape(String delimeter)
+	{
+		return delimeter.replaceAll(ESCAPE_REGEX, ESCAPE_REPLACEMENT);
 	}
 
 	/**
