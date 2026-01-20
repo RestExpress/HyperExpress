@@ -17,6 +17,8 @@ package org.restexpress.plugin.hyperexpress;
 
 import org.restexpress.Request;
 import org.restexpress.pipeline.Preprocessor;
+import org.restexpress.url.BaseUrl;
+import org.restexpress.url.BaseUrlResolver;
 
 import com.strategicgains.hyperexpress.HyperExpress;
 
@@ -38,20 +40,15 @@ public class RequestHeaderTokenBinder
 implements Preprocessor
 {
 	private static final String BASE_URL_TOKEN = "baseUrl";
-	private static final String REFERER_HEADER_NAME = "referer";
 
 	@Override
 	public void process(Request request)
 	{
-		String referrer = request.getHeader(REFERER_HEADER_NAME);
+		BaseUrl baseUrl = BaseUrlResolver.resolve(request);
 
-		if (referrer != null)
+		if (baseUrl != null)
 		{
-			HyperExpress.bind(BASE_URL_TOKEN, request.getScheme() + "://" + referrer);			
-		}
-		else // use HOST header
-		{
-			HyperExpress.bind(BASE_URL_TOKEN, request.getBaseUrl());
+			HyperExpress.bind(BASE_URL_TOKEN, baseUrl.toString());
 		}
 
 		for (String token : request.getHeaderNames())
