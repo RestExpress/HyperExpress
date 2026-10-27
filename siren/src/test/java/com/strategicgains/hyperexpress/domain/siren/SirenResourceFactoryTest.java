@@ -1,15 +1,16 @@
 package com.strategicgains.hyperexpress.domain.siren;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.strategicgains.hyperexpress.AbstractResourceFactoryStrategy;
 import com.strategicgains.hyperexpress.domain.Resource;
-import com.strategicgains.hyperexpress.domain.siren.SirenResource;
-import com.strategicgains.hyperexpress.domain.siren.SirenResourceFactory;
 
 public class SirenResourceFactoryTest
 {

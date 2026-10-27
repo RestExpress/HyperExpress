@@ -3,9 +3,9 @@
  */
 package com.strategicgains.hyperexpress.util;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author fredta2

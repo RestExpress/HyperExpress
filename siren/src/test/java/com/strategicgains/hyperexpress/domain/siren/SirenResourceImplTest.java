@@ -15,12 +15,13 @@
 */
 package com.strategicgains.hyperexpress.domain.siren;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.strategicgains.hyperexpress.builder.DefaultTokenResolver;
 import com.strategicgains.hyperexpress.domain.Namespace;
@@ -32,46 +33,58 @@ import com.strategicgains.hyperexpress.exception.ResourceException;
  */
 public class SirenResourceImplTest
 {
-	@Test(expected=ResourceException.class)
+	@Test
 	public void shouldThrowOnMissingRel()
 	{
+		assertThrows(ResourceException.class, () -> {
 		SirenResource r = new SirenResource();
 		r.addLink(new SirenLinkBuilder("/something").build(new DefaultTokenResolver()));
+		});
 	}
 
-	@Test(expected=ResourceException.class)
+	@Test
 	public void shouldThrowOnNullLink()
 	{
+		assertThrows(ResourceException.class, () -> {
 		SirenResource r = new SirenResource();
 		r.addLink(null);
+		});
 	}
 
-	@Test(expected=ResourceException.class)
+	@Test
 	public void shouldThrowOnNullEmbed()
 	{
+		assertThrows(ResourceException.class, () -> {
 		SirenResource r = new SirenResource();
 		r.addResource("something", null);
+		});
 	}
 
-	@Test(expected=ResourceException.class)
+	@Test
 	public void shouldThrowOnNullEmbedRel()
 	{
+		assertThrows(ResourceException.class, () -> {
 		SirenResource r = new SirenResource();
 		r.addResource(null, new SirenResource());
+		});
 	}
 
-	@Test(expected=ResourceException.class)
+	@Test
 	public void shouldThrowOnNullCurie()
 	{
+		assertThrows(ResourceException.class, () -> {
 		SirenResource r = new SirenResource();
 		r.addNamespace(null);
+		});
 	}
 
-	@Test(expected=ResourceException.class)
+	@Test
 	public void shouldThrowOnNamelessCurie()
 	{
+		assertThrows(ResourceException.class, () -> {
 		SirenResource r = new SirenResource();
 		r.addNamespace(new Namespace(null, "/sample/{rel}"));
+		});
 	}
 
 	@Test

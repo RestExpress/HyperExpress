@@ -1,12 +1,12 @@
 /*
 	Copyright 2005 Strategic Gains, Inc.
-	
+
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
-	
+
 		http://www.apache.org/licenses/LICENSE-2.0
-	
+
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,15 +14,16 @@
 	limitations under the License.
 */
 package com.strategicgains.hyperexpress.util;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Todd Fredrich
@@ -61,13 +62,11 @@ public class MapStringFormatTest
 		assertEquals(FREDRICH_TODD_A, result);
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void shouldThrowExceptionWithUnbalancedParameters()
 	{
 		MapStringFormat formatter = new MapStringFormat();
-		String template = "{last_name}, {first_name} {middle_initial}.";
-		formatter.format(template, "first_name", "Todd", "middle_initial", "last_name", "Fredrich");
-		fail("Shouldn't get here");
+		assertThrows(IllegalArgumentException.class, () -> formatter.format("{last_name}, {first_name} {middle_initial}.", "first_name", "Todd", "middle_initial", "last_name", "Fredrich"));
 	}
 
 	@Test
@@ -89,7 +88,7 @@ public class MapStringFormatTest
 		String result = formatter.format(template, parameters);
 		assertEquals(FREDRICH_TODD_A, result);
 	}
-	
+
 	@Test
 	public void shouldConvertNameValuePairsToMap()
 	{
@@ -100,13 +99,12 @@ public class MapStringFormatTest
 		assertEquals("Fredrich", pairs.get("lastName"));
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void shouldThrowOnUnmatchedPairs()
 	{
-		MapStringFormat.toMap("firstName", "Todd", "lastName");
-		fail("Should throw IllegalArgumentException for unmatched pair");
+		assertThrows(IllegalArgumentException.class, () -> MapStringFormat.toMap("firstName", "Todd", "lastName"));
 	}
-	
+
 	@Test
 	public void shouldHandleNull()
 	{
@@ -130,5 +128,5 @@ public class MapStringFormatTest
 			"last_name", "Fredrich"
 		};
 	}
-	
+
 }

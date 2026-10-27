@@ -19,17 +19,17 @@
  */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -53,7 +53,7 @@ public class HalResourceDeserializerTest
 {
 	private static ObjectMapper mapper = new ObjectMapper();
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception
 	{
 		SimpleModule module = new SimpleModule();

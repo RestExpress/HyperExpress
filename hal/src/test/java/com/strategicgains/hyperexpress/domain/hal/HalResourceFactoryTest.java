@@ -1,10 +1,10 @@
 package com.strategicgains.hyperexpress.domain.hal;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.strategicgains.hyperexpress.AbstractResourceFactoryStrategy;
 import com.strategicgains.hyperexpress.domain.Resource;

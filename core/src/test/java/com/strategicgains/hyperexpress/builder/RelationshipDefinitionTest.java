@@ -2,12 +2,12 @@ package com.strategicgains.hyperexpress.builder;
 
 import static com.strategicgains.hyperexpress.RelTypes.SELF;
 import static com.strategicgains.hyperexpress.RelTypes.UP;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.strategicgains.hyperexpress.domain.Blog;
 import com.strategicgains.hyperexpress.domain.Comment;

@@ -4,11 +4,11 @@ import static com.strategicgains.hyperexpress.RelTypes.ALTERNATE;
 import static com.strategicgains.hyperexpress.RelTypes.NEXT;
 import static com.strategicgains.hyperexpress.RelTypes.PREV;
 import static com.strategicgains.hyperexpress.RelTypes.SELF;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,10 +16,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.strategicgains.hyperexpress.domain.Blog;
 import com.strategicgains.hyperexpress.domain.Comment;
@@ -30,7 +30,7 @@ import com.strategicgains.hyperexpress.domain.Resource;
 
 public class HyperExpressTest
 {
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception
 	{
 		HyperExpress.registerResourceFactoryStrategy(new NullResourceFactoryStrategy(), "*");
@@ -70,12 +70,12 @@ public class HyperExpressTest
 				.ifBound("superUser");
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDownAfterClass() throws Exception
 	{
 	}
 
-	@After
+	@AfterEach
 	public void cleanup()
 	{
 		HyperExpress.clearTokenBindings();

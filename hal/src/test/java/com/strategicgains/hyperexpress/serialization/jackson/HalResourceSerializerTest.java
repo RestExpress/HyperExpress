@@ -15,15 +15,15 @@
  */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -47,7 +47,7 @@ public class HalResourceSerializerTest
 {
 	private static ObjectMapper mapper = new ObjectMapper();
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception
 	{
 		SimpleModule module = new SimpleModule();

@@ -1,12 +1,12 @@
 package com.strategicgains.hyperexpress.domain.hal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.strategicgains.hyperexpress.HyperExpress;
 import com.strategicgains.hyperexpress.domain.Resource;
@@ -14,7 +14,7 @@ import com.strategicgains.hyperexpress.domain.Resource;
 public class HyperExpressHalTest
 {
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception
 	{
 		HyperExpress.registerResourceFactoryStrategy(new HalResourceFactory(), "*");

@@ -15,12 +15,12 @@
  */
 package com.strategicgains.hyperexpress.serialization.siren.jackson;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.text.SimpleDateFormat;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -45,7 +45,7 @@ public class SirenResourceSerializerTest
 {
 	private static ObjectMapper mapper = new ObjectMapper();
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception
 	{
 		SimpleModule module = new SimpleModule();

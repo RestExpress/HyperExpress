@@ -15,10 +15,10 @@
 */
 package com.strategicgains.hyperexpress.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.strategicgains.hyperexpress.RelTypes;
 import com.strategicgains.hyperexpress.annotation.BindToken;
